@@ -2,10 +2,9 @@ package me.m41k0n.investment.presentation.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import me.m41k0n.investment.application.usecase.RegisterInvestmentUseCase;
-import me.m41k0n.investment.application.usecase.command.RegisterInvestmentCommand;
-import me.m41k0n.investment.domain.*;
+import me.m41k0n.investment.application.service.InvestmentApplicationService;
 import me.m41k0n.investment.presentation.dto.InvestmentRequest;
+import me.m41k0n.investment.presentation.dto.InvestmentResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,7 +33,7 @@ class InvestmentControllerTest {
     private WebApplicationContext webApplicationContext;
 
     @MockBean
-    private RegisterInvestmentUseCase registerInvestmentUseCase;
+    private InvestmentApplicationService investmentApplicationService;
 
     private final ObjectMapper objectMapper = new ObjectMapper();
 
@@ -54,16 +53,17 @@ class InvestmentControllerTest {
                 "Banco do Brasil",
                 BigDecimal.valueOf(0.0)
         );
-        Investment savedInvestment = Investment.createNew(
+        InvestmentResponse response = new InvestmentResponse(
+                "some-id",
                 request.name(),
                 request.type(),
-                new InvestmentValue(request.investmentValue()),
+                request.investmentValue(),
                 request.purchaseDate(),
                 request.broker(),
-                new PurchaseRate(request.purchaseRate())
+                request.purchaseRate()
         );
 
-        when(registerInvestmentUseCase.execute(any(RegisterInvestmentCommand.class))).thenReturn(savedInvestment);
+        when(investmentApplicationService.registerInvestment(any(InvestmentRequest.class))).thenReturn(response);
 
         String jsonRequest = objectMapper.writeValueAsString(request);
 
@@ -72,7 +72,7 @@ class InvestmentControllerTest {
                         .content(jsonRequest))
                 .andExpect(status().isCreated());
 
-        verify(registerInvestmentUseCase, times(1)).execute(any(RegisterInvestmentCommand.class));
+        verify(investmentApplicationService, times(1)).registerInvestment(any(InvestmentRequest.class));
     }
 
     @Test
@@ -86,6 +86,6 @@ class InvestmentControllerTest {
                         .content(jsonRequest))
                 .andExpect(status().isBadRequest());
 
-        verify(registerInvestmentUseCase, never()).execute(any(RegisterInvestmentCommand.class));
+        verify(investmentApplicationService, never()).registerInvestment(any(InvestmentRequest.class));
     }
 }
