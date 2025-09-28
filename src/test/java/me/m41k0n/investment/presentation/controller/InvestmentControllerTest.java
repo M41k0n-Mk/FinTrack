@@ -1,0 +1,91 @@
+package me.m41k0n.investment.presentation.controller;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import me.m41k0n.investment.application.usecase.RegisterInvestmentUseCase;
+import me.m41k0n.investment.application.usecase.command.RegisterInvestmentCommand;
+import me.m41k0n.investment.domain.*;
+import me.m41k0n.investment.presentation.dto.InvestmentRequest;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.web.context.WebApplicationContext;
+
+import java.math.BigDecimal;
+import java.time.LocalDate;
+
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+@WebMvcTest(InvestmentController.class)
+class InvestmentControllerTest {
+
+    @Autowired
+    private MockMvc mockMvc;
+
+    @Autowired
+    private WebApplicationContext webApplicationContext;
+
+    @MockBean
+    private RegisterInvestmentUseCase registerInvestmentUseCase;
+
+    private final ObjectMapper objectMapper = new ObjectMapper();
+
+    @BeforeEach
+    public void setup() {
+        this.mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
+        objectMapper.registerModule(new JavaTimeModule());
+    }
+
+    @Test
+    void shouldRegisterInvestmentThroughControllerSuccessfully() throws Exception {
+        InvestmentRequest request = new InvestmentRequest(
+                "Fundo de Renda Fixa",
+                "Renda Fixa",
+                BigDecimal.valueOf(5000.0),
+                LocalDate.now(),
+                "Banco do Brasil",
+                BigDecimal.valueOf(0.0)
+        );
+        Investment savedInvestment = Investment.createNew(
+                request.name(),
+                request.type(),
+                new InvestmentValue(request.investmentValue()),
+                request.purchaseDate(),
+                request.broker(),
+                new PurchaseRate(request.purchaseRate())
+        );
+
+        when(registerInvestmentUseCase.execute(any(RegisterInvestmentCommand.class))).thenReturn(savedInvestment);
+
+        String jsonRequest = objectMapper.writeValueAsString(request);
+
+        mockMvc.perform(post("/api/investments")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(jsonRequest))
+                .andExpect(status().isCreated());
+
+        verify(registerInvestmentUseCase, times(1)).execute(any(RegisterInvestmentCommand.class));
+    }
+
+    @Test
+    void shouldReturnBadRequestWhenRegistrationRequestIsInvalid() throws Exception {
+        InvestmentRequest invalidRequest = new InvestmentRequest("", "", BigDecimal.valueOf(-1.0), null, "", BigDecimal.valueOf(-1.0));
+
+        String jsonRequest = objectMapper.writeValueAsString(invalidRequest);
+
+        mockMvc.perform(post("/api/investments")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(jsonRequest))
+                .andExpect(status().isBadRequest());
+
+        verify(registerInvestmentUseCase, never()).execute(any(RegisterInvestmentCommand.class));
+    }
+}
