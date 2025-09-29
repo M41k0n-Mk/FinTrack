@@ -57,4 +57,23 @@ public record Investment(
                 "Previdência", "Criptoativos", "Imóveis", "Outros"
         );
     }
+
+    public Investment withUpdatedFields(
+            String name,
+            String type,
+            InvestmentValue investmentValue,
+            LocalDate purchaseDate,
+            String broker,
+            PurchaseRate purchaseRate
+    ) {
+        return new Investment(
+                this.id,
+                name,
+                type,
+                investmentValue,
+                purchaseDate,
+                broker,
+                purchaseRate
+        );
+    }
 }
