@@ -1,9 +1,9 @@
-package me.m41k0n.investment.presentation.dto;
+package me.m41k0n.investment.application.usecase.command;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
-public record InvestmentResponse(
+public record UpdateInvestmentCommand(
         String id,
         String name,
         String type,

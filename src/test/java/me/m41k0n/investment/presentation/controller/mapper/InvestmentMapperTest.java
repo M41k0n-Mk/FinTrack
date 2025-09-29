@@ -47,7 +47,7 @@ class InvestmentMapperTest {
         assertEquals(domain.id(), response.id());
         assertEquals(domain.name(), response.name());
         assertEquals(domain.type(), response.type());
-        assertEquals(domain.investmentValue().amount(), response.value());
+        assertEquals(domain.investmentValue().amount(), response.investmentValue());
         assertEquals(domain.purchaseDate(), response.purchaseDate());
         assertEquals(domain.broker(), response.broker());
         assertEquals(domain.purchaseRate().value(), response.purchaseRate());

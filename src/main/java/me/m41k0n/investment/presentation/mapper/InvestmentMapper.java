@@ -22,7 +22,7 @@ public interface InvestmentMapper {
     @Mapping(target = "purchaseRate", source = "purchaseRate", qualifiedByName = "toPurchaseRate")
     Investment toDomain(InvestmentRequest request);
 
-    @Mapping(target = "value", source = "investmentValue.amount")
+    @Mapping(target = "investmentValue", source = "investmentValue.amount")
     @Mapping(target = "purchaseRate", source = "purchaseRate.value")
     InvestmentResponse toResponse(Investment domain);
 
