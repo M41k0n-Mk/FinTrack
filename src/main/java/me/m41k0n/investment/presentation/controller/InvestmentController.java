@@ -32,16 +32,7 @@ public class InvestmentController {
             throw new BadRequestException("Id in path and body must match.");
         }
 
-        InvestmentUpdateRequest fixedRequest = new InvestmentUpdateRequest(
-                id,
-                request.name(),
-                request.type(),
-                request.investmentValue(),
-                request.purchaseDate(),
-                request.broker(),
-                request.purchaseRate()
-        );
-        return investmentApplicationService.updateInvestment(fixedRequest);
+        return investmentApplicationService.updateInvestment(request);
     }
 
     @GetMapping

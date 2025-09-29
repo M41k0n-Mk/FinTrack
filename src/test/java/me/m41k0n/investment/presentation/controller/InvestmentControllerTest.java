@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import me.m41k0n.investment.application.service.InvestmentApplicationService;
 import me.m41k0n.investment.exceptions.BusinessException;
+import me.m41k0n.investment.exceptions.InvestmentNotFoundException;
 import me.m41k0n.investment.presentation.dto.InvestmentRequest;
 import me.m41k0n.investment.presentation.dto.InvestmentResponse;
 import me.m41k0n.investment.presentation.dto.InvestmentUpdateRequest;
@@ -173,7 +174,7 @@ class InvestmentControllerTest {
                 BigDecimal.valueOf(0.0)
         );
         when(investmentApplicationService.updateInvestment(any(InvestmentUpdateRequest.class)))
-                .thenThrow(new BusinessException("Investment not found"));
+                .thenThrow(new InvestmentNotFoundException("inv-id-1"));
 
         String jsonRequest = objectMapper.writeValueAsString(request);
 

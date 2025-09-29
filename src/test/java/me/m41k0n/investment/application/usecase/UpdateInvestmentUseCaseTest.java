@@ -5,7 +5,7 @@ import me.m41k0n.investment.domain.Investment;
 import me.m41k0n.investment.domain.InvestmentRepository;
 import me.m41k0n.investment.domain.InvestmentValue;
 import me.m41k0n.investment.domain.PurchaseRate;
-import me.m41k0n.investment.exceptions.BusinessException;
+import me.m41k0n.investment.exceptions.InvestmentNotFoundException;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
@@ -58,6 +58,6 @@ class UpdateInvestmentUseCaseTest {
         );
         when(repository.findById(id)).thenReturn(Optional.empty());
 
-        assertThrows(BusinessException.class, () -> useCase.execute(command));
+        assertThrows(InvestmentNotFoundException.class, () -> useCase.execute(command));
     }
 }
