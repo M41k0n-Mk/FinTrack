@@ -3,8 +3,10 @@ package me.m41k0n.investment.presentation.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import me.m41k0n.investment.application.service.InvestmentApplicationService;
+import me.m41k0n.investment.exceptions.BusinessException;
 import me.m41k0n.investment.presentation.dto.InvestmentRequest;
 import me.m41k0n.investment.presentation.dto.InvestmentResponse;
+import me.m41k0n.investment.presentation.dto.InvestmentUpdateRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +23,7 @@ import java.time.LocalDate;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(InvestmentController.class)
@@ -87,5 +90,118 @@ class InvestmentControllerTest {
                 .andExpect(status().isBadRequest());
 
         verify(investmentApplicationService, never()).registerInvestment(any(InvestmentRequest.class));
+    }
+
+    @Test
+    void shouldUpdateInvestmentSuccessfully() throws Exception {
+        InvestmentUpdateRequest request = new InvestmentUpdateRequest(
+                "inv-id-1",
+                "Fundo de Renda Fixa",
+                "Renda Fixa",
+                BigDecimal.valueOf(5000.0),
+                LocalDate.now(),
+                "Banco do Brasil",
+                BigDecimal.valueOf(0.0)
+        );
+        InvestmentResponse response = new InvestmentResponse(
+                request.id(),
+                request.name(),
+                request.type(),
+                request.investmentValue(),
+                request.purchaseDate(),
+                request.broker(),
+                request.purchaseRate()
+        );
+
+        when(investmentApplicationService.updateInvestment(any(InvestmentUpdateRequest.class))).thenReturn(response);
+
+        String jsonRequest = objectMapper.writeValueAsString(request);
+
+        mockMvc.perform(put("/api/investments/{id}", request.id())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(jsonRequest))
+                .andExpect(status().isOk());
+
+        verify(investmentApplicationService, times(1)).updateInvestment(any(InvestmentUpdateRequest.class));
+    }
+
+    @Test
+    void shouldReturnBadRequestWhenUpdateRequestIsInvalid() throws Exception {
+        InvestmentUpdateRequest invalidRequest = new InvestmentUpdateRequest(
+                "", "", null, null, null, "", null
+        );
+        String jsonRequest = objectMapper.writeValueAsString(invalidRequest);
+
+        mockMvc.perform(put("/api/investments/{id}", "inv-id-1")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(jsonRequest))
+                .andExpect(status().isBadRequest());
+
+        verify(investmentApplicationService, never()).updateInvestment(any(InvestmentUpdateRequest.class));
+    }
+
+    @Test
+    void shouldReturnBadRequestWhenPathIdAndBodyIdDoNotMatch() throws Exception {
+        InvestmentUpdateRequest request = new InvestmentUpdateRequest(
+                "inv-id-1",
+                "Fundo de Renda Fixa",
+                "Renda Fixa",
+                BigDecimal.valueOf(5000.0),
+                LocalDate.now(),
+                "Banco do Brasil",
+                BigDecimal.valueOf(0.0)
+        );
+        String jsonRequest = objectMapper.writeValueAsString(request);
+
+        mockMvc.perform(put("/api/investments/{id}", "different-id")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(jsonRequest))
+                .andExpect(status().isBadRequest());
+
+        verify(investmentApplicationService, never()).updateInvestment(any(InvestmentUpdateRequest.class));
+    }
+
+    @Test
+    void shouldReturnNotFoundWhenInvestmentDoesNotExist() throws Exception {
+        InvestmentUpdateRequest request = new InvestmentUpdateRequest(
+                "inv-id-1",
+                "Fundo de Renda Fixa",
+                "Renda Fixa",
+                BigDecimal.valueOf(5000.0),
+                LocalDate.now(),
+                "Banco do Brasil",
+                BigDecimal.valueOf(0.0)
+        );
+        when(investmentApplicationService.updateInvestment(any(InvestmentUpdateRequest.class)))
+                .thenThrow(new BusinessException("Investment not found"));
+
+        String jsonRequest = objectMapper.writeValueAsString(request);
+
+        mockMvc.perform(put("/api/investments/{id}", request.id())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(jsonRequest))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    void shouldReturnUnprocessableEntityWhenBusinessExceptionOccurs() throws Exception {
+        InvestmentUpdateRequest request = new InvestmentUpdateRequest(
+                "inv-id-1",
+                "Fundo de Renda Fixa",
+                "Renda Fixa",
+                BigDecimal.valueOf(5000.0),
+                LocalDate.now(),
+                "Banco do Brasil",
+                BigDecimal.valueOf(0.0)
+        );
+        when(investmentApplicationService.updateInvestment(any(InvestmentUpdateRequest.class)))
+                .thenThrow(new BusinessException("Business rule violated"));
+
+        String jsonRequest = objectMapper.writeValueAsString(request);
+
+        mockMvc.perform(put("/api/investments/{id}", request.id())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(jsonRequest))
+                .andExpect(status().isUnprocessableEntity());
     }
 }
