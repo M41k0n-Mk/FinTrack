@@ -10,4 +10,6 @@ public interface InvestmentRepository {
     Optional<Investment> findById(String id);
 
     List<Investment> findAll();
+
+    void deleteById(String id);
 }

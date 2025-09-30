@@ -36,4 +36,9 @@ public class InvestmentRepositoryAdapter implements InvestmentRepository {
                 .map(mapper::toDomain)
                 .toList();
     }
+
+    @Override
+    public void deleteById(String id) {
+        jpaRepository.deleteById(id);
+    }
 }
