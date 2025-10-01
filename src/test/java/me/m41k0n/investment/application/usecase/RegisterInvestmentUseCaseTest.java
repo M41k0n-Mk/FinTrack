@@ -4,6 +4,7 @@ import me.m41k0n.investment.application.usecase.command.RegisterInvestmentComman
 import me.m41k0n.investment.domain.Investment;
 import me.m41k0n.investment.domain.InvestmentRepository;
 import me.m41k0n.investment.domain.InvestmentValue;
+import me.m41k0n.investment.domain.OperationType;
 import me.m41k0n.investment.domain.PurchaseRate;
 import me.m41k0n.investment.exceptions.BusinessException;
 import org.junit.jupiter.api.Test;
@@ -36,7 +37,8 @@ class RegisterInvestmentUseCaseTest {
                 BigDecimal.valueOf(1000.0),
                 LocalDate.now(),
                 "XP Investimentos",
-                BigDecimal.valueOf(10.50)
+                BigDecimal.valueOf(10.50),
+                "COMPRA"
         );
 
         Investment expectedInvestment = Investment.createNew(
@@ -45,7 +47,8 @@ class RegisterInvestmentUseCaseTest {
                 new InvestmentValue(command.investmentValue()),
                 command.purchaseDate(),
                 command.broker(),
-                new PurchaseRate(command.purchaseRate())
+                new PurchaseRate(command.purchaseRate()),
+                new OperationType(command.operationType())
         );
         when(investmentRepository.save(any(Investment.class))).thenReturn(expectedInvestment);
 
@@ -65,7 +68,8 @@ class RegisterInvestmentUseCaseTest {
                 BigDecimal.valueOf(1000.0),
                 LocalDate.now(),
                 "XP Investimentos",
-                BigDecimal.valueOf(10.50)
+                BigDecimal.valueOf(10.50),
+                "COMPRA"
         );
 
         assertThrows(BusinessException.class, () ->
@@ -81,7 +85,8 @@ class RegisterInvestmentUseCaseTest {
                 BigDecimal.valueOf(-100.0),
                 LocalDate.now(),
                 "XP Investimentos",
-                BigDecimal.valueOf(10.50)
+                BigDecimal.valueOf(10.50),
+                "COMPRA"
         );
 
         assertThrows(BusinessException.class, () ->

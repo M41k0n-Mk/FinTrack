@@ -19,7 +19,7 @@ class InvestmentMapperTest {
     @Test
     void shouldMapRequestToDomain() {
         InvestmentRequest request = new InvestmentRequest(
-                "Ações ABC", "Renda Variável", BigDecimal.valueOf(150.0), LocalDate.now(), "XP", BigDecimal.valueOf(2.5)
+                "Ações ABC", "Renda Variável", BigDecimal.valueOf(150.0), LocalDate.now(), "XP", BigDecimal.valueOf(2.5), "COMPRA"
         );
 
         Investment domain = mapper.toDomain(request);
@@ -32,13 +32,14 @@ class InvestmentMapperTest {
         assertEquals(request.purchaseDate(), domain.purchaseDate());
         assertEquals(request.broker(), domain.broker());
         assertEquals(request.purchaseRate(), domain.purchaseRate().value());
+        assertEquals(request.operationType(), domain.operationType().value());
     }
 
     @Test
     void shouldMapDomainToResponse() {
         Investment domain = new Investment(
                 UUID.randomUUID().toString(),
-                "Ações DEF", "Renda Variável", new InvestmentValue(BigDecimal.valueOf(200.0)), LocalDate.now(), "XP", new PurchaseRate(BigDecimal.valueOf(3.0))
+                "Ações DEF", "Renda Variável", new InvestmentValue(BigDecimal.valueOf(200.0)), LocalDate.now(), "XP", new PurchaseRate(BigDecimal.valueOf(3.0)), new OperationType("COMPRA")
         );
 
         InvestmentResponse response = mapper.toResponse(domain);
@@ -51,5 +52,6 @@ class InvestmentMapperTest {
         assertEquals(domain.purchaseDate(), response.purchaseDate());
         assertEquals(domain.broker(), response.broker());
         assertEquals(domain.purchaseRate().value(), response.purchaseRate());
+        assertEquals(domain.operationType().value(), response.operationType());
     }
 }

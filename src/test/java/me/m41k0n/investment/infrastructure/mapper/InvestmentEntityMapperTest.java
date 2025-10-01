@@ -27,7 +27,8 @@ class InvestmentEntityMapperTest {
                 new InvestmentValue(BigDecimal.valueOf(250.0)),
                 LocalDate.now(),
                 "XP",
-                new PurchaseRate(BigDecimal.valueOf(3.5))
+                new PurchaseRate(BigDecimal.valueOf(3.5)),
+                new OperationType("COMPRA")
         );
 
         InvestmentEntity entity = mapper.toEntity(domain);
@@ -40,6 +41,7 @@ class InvestmentEntityMapperTest {
         assertEquals(domain.purchaseDate(), entity.getPurchaseDate());
         assertEquals(domain.broker(), entity.getBroker());
         assertEquals(domain.purchaseRate().value(), entity.getPurchaseRate());
+        assertEquals(domain.operationType().value(), entity.getOperationType());
     }
 
     @Test
@@ -52,6 +54,7 @@ class InvestmentEntityMapperTest {
         entity.setPurchaseDate(LocalDate.now());
         entity.setBroker("XP");
         entity.setPurchaseRate(BigDecimal.valueOf(4.0));
+        entity.setOperationType("VENDA");
 
         Investment domain = mapper.toDomain(entity);
 
@@ -63,5 +66,6 @@ class InvestmentEntityMapperTest {
         assertEquals(entity.getPurchaseDate(), domain.purchaseDate());
         assertEquals(entity.getBroker(), domain.broker());
         assertEquals(entity.getPurchaseRate(), domain.purchaseRate().value());
+        assertEquals(entity.getOperationType(), domain.operationType().value());
     }
 }

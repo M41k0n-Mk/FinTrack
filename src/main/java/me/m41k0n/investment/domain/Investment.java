@@ -13,7 +13,8 @@ public record Investment(
         InvestmentValue investmentValue,
         LocalDate purchaseDate,
         String broker,
-        PurchaseRate purchaseRate
+        PurchaseRate purchaseRate,
+        OperationType operationType
 ) {
     public Investment {
         if (name == null || name.isBlank())
@@ -30,6 +31,8 @@ public record Investment(
             throw new BusinessException("Investment value is required.");
         if (purchaseRate == null)
             throw new BusinessException("Purchase rate is required.");
+        if (operationType == null)
+            throw new BusinessException("Operation type is required.");
     }
 
     public static Investment createNew(
@@ -38,7 +41,8 @@ public record Investment(
             InvestmentValue investmentValue,
             LocalDate purchaseDate,
             String broker,
-            PurchaseRate purchaseRate
+            PurchaseRate purchaseRate,
+            OperationType operationType
     ) {
         return new Investment(
                 UUID.randomUUID().toString(),
@@ -47,7 +51,8 @@ public record Investment(
                 investmentValue,
                 purchaseDate,
                 broker,
-                purchaseRate
+                purchaseRate,
+                operationType
         );
     }
 
@@ -64,7 +69,8 @@ public record Investment(
             InvestmentValue investmentValue,
             LocalDate purchaseDate,
             String broker,
-            PurchaseRate purchaseRate
+            PurchaseRate purchaseRate,
+            OperationType operationType
     ) {
         return new Investment(
                 this.id,
@@ -73,7 +79,8 @@ public record Investment(
                 investmentValue,
                 purchaseDate,
                 broker,
-                purchaseRate
+                purchaseRate,
+                operationType
         );
     }
 }

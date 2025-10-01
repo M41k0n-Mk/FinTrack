@@ -10,5 +10,6 @@ public record UpdateInvestmentCommand(
         BigDecimal investmentValue,
         LocalDate purchaseDate,
         String broker,
-        BigDecimal purchaseRate
+        BigDecimal purchaseRate,
+        String operationType
 ) {}

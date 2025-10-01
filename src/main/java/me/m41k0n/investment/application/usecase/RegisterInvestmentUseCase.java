@@ -17,7 +17,8 @@ public class RegisterInvestmentUseCase {
                 new InvestmentValue(command.investmentValue()),
                 command.purchaseDate(),
                 command.broker(),
-                new PurchaseRate(command.purchaseRate())
+                new PurchaseRate(command.purchaseRate()),
+                new OperationType(command.operationType())
         );
         return repository.save(investment);
     }
