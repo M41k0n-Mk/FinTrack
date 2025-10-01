@@ -5,6 +5,7 @@ import me.m41k0n.investment.application.usecase.command.UpdateInvestmentCommand;
 import me.m41k0n.investment.domain.Investment;
 import me.m41k0n.investment.domain.InvestmentRepository;
 import me.m41k0n.investment.domain.InvestmentValue;
+import me.m41k0n.investment.domain.OperationType;
 import me.m41k0n.investment.domain.PurchaseRate;
 import me.m41k0n.investment.exceptions.InvestmentNotFoundException;
 import org.springframework.stereotype.Service;
@@ -25,7 +26,8 @@ public class UpdateInvestmentUseCase {
                 new InvestmentValue(command.investmentValue()),
                 command.purchaseDate(),
                 command.broker(),
-                new PurchaseRate(command.purchaseRate())
+                new PurchaseRate(command.purchaseRate()),
+                new OperationType(command.operationType())
         );
 
         return investmentRepository.save(investment);

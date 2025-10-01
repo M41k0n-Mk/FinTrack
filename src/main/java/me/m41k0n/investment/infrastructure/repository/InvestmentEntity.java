@@ -24,4 +24,5 @@ public class InvestmentEntity {
     private LocalDate purchaseDate;
     private String broker;
     private BigDecimal purchaseRate;
+    private String operationType;
 }
