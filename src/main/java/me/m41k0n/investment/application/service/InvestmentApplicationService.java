@@ -3,6 +3,7 @@ package me.m41k0n.investment.application.service;
 import lombok.RequiredArgsConstructor;
 import me.m41k0n.investment.application.usecase.RegisterInvestmentUseCase;
 import me.m41k0n.investment.application.usecase.UpdateInvestmentUseCase;
+import me.m41k0n.investment.application.usecase.DeleteInvestmentUseCase;
 import me.m41k0n.investment.application.usecase.command.RegisterInvestmentCommand;
 import me.m41k0n.investment.application.usecase.command.UpdateInvestmentCommand;
 import me.m41k0n.investment.domain.Investment;
@@ -22,6 +23,7 @@ public class InvestmentApplicationService {
 
     private final RegisterInvestmentUseCase registerInvestmentUseCase;
     private final UpdateInvestmentUseCase updateInvestmentUseCase;
+    private final DeleteInvestmentUseCase deleteInvestmentUseCase;
     private final InvestmentRepository investmentRepository;
 
     public InvestmentResponse registerInvestment(InvestmentRequest request) {
@@ -48,5 +50,9 @@ public class InvestmentApplicationService {
         return investments.stream()
                 .map(InvestmentMapper.INSTANCE::toResponse)
                 .toList();
+    }
+
+    public void deleteInvestment(String id) {
+        deleteInvestmentUseCase.execute(id);
     }
 }

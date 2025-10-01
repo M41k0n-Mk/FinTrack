@@ -1,5 +1,6 @@
 package me.m41k0n.investment.application.service;
 
+import me.m41k0n.investment.application.usecase.DeleteInvestmentUseCase;
 import me.m41k0n.investment.application.usecase.RegisterInvestmentUseCase;
 import me.m41k0n.investment.application.usecase.UpdateInvestmentUseCase;
 import me.m41k0n.investment.application.usecase.command.RegisterInvestmentCommand;
@@ -8,6 +9,7 @@ import me.m41k0n.investment.domain.Investment;
 import me.m41k0n.investment.domain.InvestmentRepository;
 import me.m41k0n.investment.domain.InvestmentValue;
 import me.m41k0n.investment.domain.PurchaseRate;
+import me.m41k0n.investment.exceptions.InvestmentNotFoundException;
 import me.m41k0n.investment.presentation.dto.InvestmentRequest;
 import me.m41k0n.investment.presentation.dto.InvestmentResponse;
 import me.m41k0n.investment.presentation.dto.InvestmentUpdateRequest;
@@ -28,6 +30,7 @@ class InvestmentApplicationServiceTest {
 
     private RegisterInvestmentUseCase registerInvestmentUseCase;
     private UpdateInvestmentUseCase updateInvestmentUseCase;
+    private DeleteInvestmentUseCase deleteInvestmentUseCase;
     private InvestmentRepository investmentRepository;
     private InvestmentApplicationService service;
 
@@ -35,8 +38,14 @@ class InvestmentApplicationServiceTest {
     void setUp() {
         registerInvestmentUseCase = mock(RegisterInvestmentUseCase.class);
         updateInvestmentUseCase = mock(UpdateInvestmentUseCase.class);
+        deleteInvestmentUseCase = mock(DeleteInvestmentUseCase.class);
         investmentRepository = mock(InvestmentRepository.class);
-        service = new InvestmentApplicationService(registerInvestmentUseCase, updateInvestmentUseCase, investmentRepository);
+        service = new InvestmentApplicationService(
+                registerInvestmentUseCase,
+                updateInvestmentUseCase,
+                deleteInvestmentUseCase,
+                investmentRepository
+        );
     }
 
     @Test
@@ -136,5 +145,24 @@ class InvestmentApplicationServiceTest {
 
         assertTrue(responses.isEmpty());
         verify(investmentRepository, times(1)).findAll();
+    }
+
+    @Test
+    void testDeleteInvestmentShouldCallUseCase() {
+        String investmentId = "id-to-delete";
+        doNothing().when(deleteInvestmentUseCase).execute(investmentId);
+
+        service.deleteInvestment(investmentId);
+
+        verify(deleteInvestmentUseCase, times(1)).execute(investmentId);
+    }
+
+    @Test
+    void testDeleteInvestmentThrowsIfNotFound() {
+        String investmentId = "non-existent-id";
+        doThrow(new InvestmentNotFoundException(investmentId)).when(deleteInvestmentUseCase).execute(investmentId);
+
+        assertThrows(InvestmentNotFoundException.class, () -> service.deleteInvestment(investmentId));
+        verify(deleteInvestmentUseCase, times(1)).execute(investmentId);
     }
 }

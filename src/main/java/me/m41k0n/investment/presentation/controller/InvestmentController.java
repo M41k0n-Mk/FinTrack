@@ -31,7 +31,6 @@ public class InvestmentController {
         if (!id.equals(request.id())) {
             throw new BadRequestException("Id in path and body must match.");
         }
-
         return investmentApplicationService.updateInvestment(request);
     }
 
@@ -39,5 +38,11 @@ public class InvestmentController {
     @ResponseStatus(HttpStatus.OK)
     public List<InvestmentResponse> findAll() {
         return investmentApplicationService.findAll();
+    }
+
+    @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void delete(@PathVariable String id) {
+        investmentApplicationService.deleteInvestment(id);
     }
 }

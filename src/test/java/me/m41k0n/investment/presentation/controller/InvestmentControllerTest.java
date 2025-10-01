@@ -23,8 +23,7 @@ import java.time.LocalDate;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(InvestmentController.class)
@@ -204,5 +203,28 @@ class InvestmentControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(jsonRequest))
                 .andExpect(status().isUnprocessableEntity());
+    }
+
+    @Test
+    void shouldDeleteInvestmentSuccessfully() throws Exception {
+        String investmentId = "to-delete-id";
+
+        doNothing().when(investmentApplicationService).deleteInvestment(investmentId);
+
+        mockMvc.perform(delete("/api/investments/{id}", investmentId))
+                .andExpect(status().isNoContent());
+
+        verify(investmentApplicationService, times(1)).deleteInvestment(investmentId);
+    }
+
+    @Test
+    void shouldReturnNotFoundWhenDeletingNonExistingInvestment() throws Exception {
+        String investmentId = "non-existent-id";
+        doThrow(new InvestmentNotFoundException(investmentId)).when(investmentApplicationService).deleteInvestment(investmentId);
+
+        mockMvc.perform(delete("/api/investments/{id}", investmentId))
+                .andExpect(status().isNotFound());
+
+        verify(investmentApplicationService, times(1)).deleteInvestment(investmentId);
     }
 }
