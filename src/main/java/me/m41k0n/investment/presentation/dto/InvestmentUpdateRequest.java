@@ -12,5 +12,6 @@ public record InvestmentUpdateRequest(
         @NotNull(message = "Value cannot be null") BigDecimal investmentValue,
         @NotNull(message = "Purchase date cannot be null") LocalDate purchaseDate,
         @NotBlank(message = "Broker cannot be blank") String broker,
-        @NotNull(message = "Purchase rate cannot be null") BigDecimal purchaseRate
+        @NotNull(message = "Purchase rate cannot be null") BigDecimal purchaseRate,
+        @NotBlank(message = "Operation type cannot be blank") String operationType
 ) {}

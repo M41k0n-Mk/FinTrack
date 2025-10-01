@@ -33,7 +33,8 @@ public class InvestmentApplicationService {
                 request.investmentValue(),
                 request.purchaseDate(),
                 request.broker(),
-                request.purchaseRate()
+                request.purchaseRate(),
+                request.operationType()
         );
         Investment investment = registerInvestmentUseCase.execute(command);
         return InvestmentMapper.INSTANCE.toResponse(investment);

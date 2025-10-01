@@ -54,7 +54,8 @@ class InvestmentControllerTest {
                 BigDecimal.valueOf(5000.0),
                 LocalDate.now(),
                 "Banco do Brasil",
-                BigDecimal.valueOf(0.0)
+                BigDecimal.valueOf(0.0),
+                "COMPRA"
         );
         InvestmentResponse response = new InvestmentResponse(
                 "some-id",
@@ -63,7 +64,8 @@ class InvestmentControllerTest {
                 request.investmentValue(),
                 request.purchaseDate(),
                 request.broker(),
-                request.purchaseRate()
+                request.purchaseRate(),
+                request.operationType()
         );
 
         when(investmentApplicationService.registerInvestment(any(InvestmentRequest.class))).thenReturn(response);
@@ -80,7 +82,7 @@ class InvestmentControllerTest {
 
     @Test
     void shouldReturnBadRequestWhenRegistrationRequestIsInvalid() throws Exception {
-        InvestmentRequest invalidRequest = new InvestmentRequest("", "", BigDecimal.valueOf(-1.0), null, "", BigDecimal.valueOf(-1.0));
+        InvestmentRequest invalidRequest = new InvestmentRequest("", "", BigDecimal.valueOf(-1.0), null, "", BigDecimal.valueOf(-1.0), "");
 
         String jsonRequest = objectMapper.writeValueAsString(invalidRequest);
 
@@ -101,7 +103,8 @@ class InvestmentControllerTest {
                 BigDecimal.valueOf(5000.0),
                 LocalDate.now(),
                 "Banco do Brasil",
-                BigDecimal.valueOf(0.0)
+                BigDecimal.valueOf(0.0),
+                "COMPRA"
         );
         InvestmentResponse response = new InvestmentResponse(
                 request.id(),
@@ -110,7 +113,8 @@ class InvestmentControllerTest {
                 request.investmentValue(),
                 request.purchaseDate(),
                 request.broker(),
-                request.purchaseRate()
+                request.purchaseRate(),
+                request.operationType()
         );
 
         when(investmentApplicationService.updateInvestment(any(InvestmentUpdateRequest.class))).thenReturn(response);
@@ -128,7 +132,7 @@ class InvestmentControllerTest {
     @Test
     void shouldReturnBadRequestWhenUpdateRequestIsInvalid() throws Exception {
         InvestmentUpdateRequest invalidRequest = new InvestmentUpdateRequest(
-                "", "", null, null, null, "", null
+                "", "", null, null, null, "", null, ""
         );
         String jsonRequest = objectMapper.writeValueAsString(invalidRequest);
 
@@ -149,7 +153,8 @@ class InvestmentControllerTest {
                 BigDecimal.valueOf(5000.0),
                 LocalDate.now(),
                 "Banco do Brasil",
-                BigDecimal.valueOf(0.0)
+                BigDecimal.valueOf(0.0),
+                "COMPRA"
         );
         String jsonRequest = objectMapper.writeValueAsString(request);
 
@@ -170,7 +175,8 @@ class InvestmentControllerTest {
                 BigDecimal.valueOf(5000.0),
                 LocalDate.now(),
                 "Banco do Brasil",
-                BigDecimal.valueOf(0.0)
+                BigDecimal.valueOf(0.0),
+                "COMPRA"
         );
         when(investmentApplicationService.updateInvestment(any(InvestmentUpdateRequest.class)))
                 .thenThrow(new InvestmentNotFoundException("inv-id-1"));
@@ -192,7 +198,8 @@ class InvestmentControllerTest {
                 BigDecimal.valueOf(5000.0),
                 LocalDate.now(),
                 "Banco do Brasil",
-                BigDecimal.valueOf(0.0)
+                BigDecimal.valueOf(0.0),
+                "COMPRA"
         );
         when(investmentApplicationService.updateInvestment(any(InvestmentUpdateRequest.class)))
                 .thenThrow(new BusinessException("Business rule violated"));

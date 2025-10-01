@@ -2,6 +2,7 @@ package me.m41k0n.investment.infrastructure.repository;
 
 import me.m41k0n.investment.domain.Investment;
 import me.m41k0n.investment.domain.InvestmentValue;
+import me.m41k0n.investment.domain.OperationType;
 import me.m41k0n.investment.domain.PurchaseRate;
 import me.m41k0n.investment.infrastructure.mapper.InvestmentEntityMapper;
 import org.junit.jupiter.api.BeforeEach;
@@ -46,7 +47,8 @@ class InvestmentRepositoryAdapterTest {
                 new InvestmentValue(BigDecimal.valueOf(1000.0)),
                 LocalDate.now(),
                 "XP Investimentos",
-                new PurchaseRate(BigDecimal.valueOf(10.50))
+                new PurchaseRate(BigDecimal.valueOf(10.50)),
+                new OperationType("COMPRA")
         );
         investmentEntity = new InvestmentEntity();
         investmentEntity.setId(investment.id());

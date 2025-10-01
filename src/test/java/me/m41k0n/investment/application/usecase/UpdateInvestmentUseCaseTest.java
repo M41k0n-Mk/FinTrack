@@ -4,6 +4,7 @@ import me.m41k0n.investment.application.usecase.command.UpdateInvestmentCommand;
 import me.m41k0n.investment.domain.Investment;
 import me.m41k0n.investment.domain.InvestmentRepository;
 import me.m41k0n.investment.domain.InvestmentValue;
+import me.m41k0n.investment.domain.OperationType;
 import me.m41k0n.investment.domain.PurchaseRate;
 import me.m41k0n.investment.exceptions.InvestmentNotFoundException;
 import org.junit.jupiter.api.Test;
@@ -30,11 +31,12 @@ class UpdateInvestmentUseCaseTest {
                 new InvestmentValue(BigDecimal.valueOf(100.0)),
                 LocalDate.now().minusDays(1),
                 "Old Broker",
-                new PurchaseRate(BigDecimal.valueOf(1.0))
+                new PurchaseRate(BigDecimal.valueOf(1.0)),
+                new OperationType("COMPRA")
         );
         UpdateInvestmentCommand command = new UpdateInvestmentCommand(
                 id, "New Name", "Renda Variável",
-                BigDecimal.valueOf(200.0), LocalDate.now(), "New Broker", BigDecimal.valueOf(2.0)
+                BigDecimal.valueOf(200.0), LocalDate.now(), "New Broker", BigDecimal.valueOf(2.0), "VENDA"
         );
 
         when(repository.findById(id)).thenReturn(Optional.of(original));
@@ -47,6 +49,7 @@ class UpdateInvestmentUseCaseTest {
         assertEquals(BigDecimal.valueOf(200.0), updated.investmentValue().amount());
         assertEquals("New Broker", updated.broker());
         assertEquals(BigDecimal.valueOf(2.0), updated.purchaseRate().value());
+        assertEquals("VENDA", updated.operationType().value());
     }
 
     @Test
@@ -54,7 +57,7 @@ class UpdateInvestmentUseCaseTest {
         String id = UUID.randomUUID().toString();
         UpdateInvestmentCommand command = new UpdateInvestmentCommand(
                 id, "Name", "Renda Fixa",
-                BigDecimal.valueOf(100.0), LocalDate.now(), "Broker", BigDecimal.valueOf(1.0)
+                BigDecimal.valueOf(100.0), LocalDate.now(), "Broker", BigDecimal.valueOf(1.0), "COMPRA"
         );
         when(repository.findById(id)).thenReturn(Optional.empty());
 

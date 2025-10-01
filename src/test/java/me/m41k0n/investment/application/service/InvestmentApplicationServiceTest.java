@@ -8,6 +8,7 @@ import me.m41k0n.investment.application.usecase.command.UpdateInvestmentCommand;
 import me.m41k0n.investment.domain.Investment;
 import me.m41k0n.investment.domain.InvestmentRepository;
 import me.m41k0n.investment.domain.InvestmentValue;
+import me.m41k0n.investment.domain.OperationType;
 import me.m41k0n.investment.domain.PurchaseRate;
 import me.m41k0n.investment.exceptions.InvestmentNotFoundException;
 import me.m41k0n.investment.presentation.dto.InvestmentRequest;
@@ -53,7 +54,7 @@ class InvestmentApplicationServiceTest {
         InvestmentRequest request = new InvestmentRequest(
                 "Tesouro Selic", "Tesouro Direto",
                 BigDecimal.valueOf(1000.00), LocalDate.now(),
-                "Banco do Brasil", BigDecimal.valueOf(0.00)
+                "Banco do Brasil", BigDecimal.valueOf(0.00), "COMPRA"
         );
         Investment mockInvestment = Investment.createNew(
                 request.name(),
@@ -61,7 +62,8 @@ class InvestmentApplicationServiceTest {
                 new me.m41k0n.investment.domain.InvestmentValue(request.investmentValue()),
                 request.purchaseDate(),
                 request.broker(),
-                new me.m41k0n.investment.domain.PurchaseRate(request.purchaseRate())
+                new me.m41k0n.investment.domain.PurchaseRate(request.purchaseRate()),
+                new me.m41k0n.investment.domain.OperationType(request.operationType())
         );
 
         when(registerInvestmentUseCase.execute(any(RegisterInvestmentCommand.class))).thenReturn(mockInvestment);
@@ -83,7 +85,7 @@ class InvestmentApplicationServiceTest {
         InvestmentUpdateRequest request = new InvestmentUpdateRequest(
                 "id-1", "Tesouro Selic", "Tesouro Direto",
                 BigDecimal.valueOf(1000.00), LocalDate.now(),
-                "Banco do Brasil", BigDecimal.valueOf(0.00)
+                "Banco do Brasil", BigDecimal.valueOf(0.00), "COMPRA"
         );
         Investment mockInvestment = Investment.createNew(
                 request.name(),
@@ -91,7 +93,8 @@ class InvestmentApplicationServiceTest {
                 new me.m41k0n.investment.domain.InvestmentValue(request.investmentValue()),
                 request.purchaseDate(),
                 request.broker(),
-                new me.m41k0n.investment.domain.PurchaseRate(request.purchaseRate())
+                new me.m41k0n.investment.domain.PurchaseRate(request.purchaseRate()),
+                new me.m41k0n.investment.domain.OperationType(request.operationType())
         );
 
         when(updateInvestmentUseCase.execute(any(UpdateInvestmentCommand.class))).thenReturn(mockInvestment);
@@ -116,7 +119,8 @@ class InvestmentApplicationServiceTest {
                 new InvestmentValue(BigDecimal.valueOf(100)),
                 LocalDate.of(2022, 1, 1),
                 "Corretora 1",
-                new PurchaseRate(BigDecimal.valueOf(1))
+                new PurchaseRate(BigDecimal.valueOf(1)),
+                new OperationType("COMPRA")
         );
         Investment investment2 = Investment.createNew(
                 "Investimento 2",
@@ -124,7 +128,8 @@ class InvestmentApplicationServiceTest {
                 new InvestmentValue(BigDecimal.valueOf(200)),
                 LocalDate.of(2022, 2, 2),
                 "Corretora 2",
-                new PurchaseRate(BigDecimal.valueOf(2))
+                new PurchaseRate(BigDecimal.valueOf(2)),
+                new OperationType("VENDA")
         );
 
         when(investmentRepository.findAll()).thenReturn(Arrays.asList(investment1, investment2));

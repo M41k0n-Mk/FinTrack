@@ -15,5 +15,6 @@ public record InvestmentRequest(
         @DecimalMin(value = "0.01", message = "Value must be positive") BigDecimal investmentValue,
         @NotNull(message = "Purchase date cannot be null") LocalDate purchaseDate,
         @NotBlank(message = "Broker cannot be blank") String broker,
-        @NotNull(message = "Purchase rate cannot be null") BigDecimal purchaseRate
+        @NotNull(message = "Purchase rate cannot be null") BigDecimal purchaseRate,
+        @NotBlank(message = "Operation type cannot be blank") String operationType
 ) {}
